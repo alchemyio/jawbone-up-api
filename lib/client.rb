@@ -74,6 +74,21 @@ module Jawbone
     define_method "mood" do |id|
       get_helper("mood/#{id}", {})
     end
+    
+    def refresh_access_token(client_secret, refresh_token)
+      url = "https://jawbone.com/auth/oauth2/token"
+      response = self.class.post url,
+        { :headers =>
+          { "Authorization" => "Bearer #{token}",
+            "Content-Type" => "application/x-www-form-urlencoded" },
+          :body => 
+          {
+            secret: client_secret,
+            refresh_token: refresh_token
+          }
+        }
+      response.parsed_response
+    end
 
     private
 
