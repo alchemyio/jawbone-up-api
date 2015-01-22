@@ -75,7 +75,7 @@ module Jawbone
       get_helper("mood/#{id}", {})
     end
     
-    def refresh_access_token(client_secret, refresh_token)
+    def refresh_access_token(client_id, client_secret, refresh_token)
       url = "https://jawbone.com/auth/oauth2/token"
       response = self.class.post url,
         { :headers =>
@@ -83,8 +83,10 @@ module Jawbone
             "Content-Type" => "application/x-www-form-urlencoded" },
           :body => 
           {
+            client_id: client_id,
             secret: client_secret,
-            refresh_token: refresh_token
+            refresh_token: refresh_token,
+            grant_type: 'refresh_token'
           }
         }
       response.parsed_response
