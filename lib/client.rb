@@ -38,6 +38,10 @@ module Jawbone
     def refresh_token(client_secret)
       post_helper("users/@me/refreshToken", {secret: client_secret})
     end
+    
+    def next_page(next_link)
+      get_helper(next_link.gsub!('/nudge/api/v.1.0', ''))
+    end
 
     base_strings = ["move", "body_event", "workout", "sleep", "meal",
       "cardiac_event", "generic_event", "heartrate"]
@@ -118,10 +122,14 @@ module Jawbone
     def get_helper(path, params={})
       path = "/" + path unless path[0] == '/'
       url = BASE_URL + path
-      stringified_params = params.collect do |k, v|
-        "#{k}=#{v}"
-      end.sort * '&'
-      full_url = url + "?" + stringified_params
+      unless params.empty?
+        stringified_params = params.collect do |k, v|
+          "#{k}=#{v}"
+        end.sort * '&'
+        full_url = url + "?" + stringified_params
+      else
+        full_url = url
+      end
       response = self.class.get full_url,
         { :headers => { "Authorization" => "Bearer #{token}" } }
       response.parsed_response
